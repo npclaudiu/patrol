@@ -1,0 +1,11 @@
+/.docs
+
+# Bazel
+/bazel-*
+
+# Node.js
+node_modules/
+.pnpm-store/
+
+# App Database
+.patrol/

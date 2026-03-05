@@ -1,0 +1,4 @@
+load("@gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/npclaudiu/patrol
+gazelle(name = "gazelle")
