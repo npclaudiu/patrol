@@ -1,0 +1,41 @@
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("@aspect_rules_js//js:defs.bzl", "js_binary")
+npm_link_all_packages(name = "node_modules")
+
+filegroup(
+    name = "static_assets",
+    srcs = [
+        "src/index.html",
+    ],
+)
+
+ts_project(
+    name = "shell_ts",
+    srcs = [
+        "src/main.ts",
+    ],
+    root_dir = "src",
+    declaration = True,
+    out_dir = "dist",
+    tsconfig = "tsconfig.json",
+    resolve_json_module = True,
+    transpiler = "tsc",
+    deps = [
+        ":node_modules/@types/node",
+        ":node_modules/electron",
+    ],
+)
+
+# A simple target to execute the shell via Bazel
+js_binary(
+    name = "start",
+    data = [
+        "tools/runner.js",
+        ":shell_ts",
+        ":static_assets",
+        ":node_modules/electron",
+    ],
+    entry_point = "tools/runner.js",
+    chdir = package_name(),
+)

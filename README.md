@@ -76,6 +76,18 @@ To compile the Go Engine across platforms:
 bazel build //engine
 ```
 
+To compile the React/Electron Shell TypeScript out to `dist/`:
+
+```bash
+bazel build //shell:shell_ts
+```
+
+To launch the Electron application locally:
+
+```bash
+bazel run //shell:start
+```
+
 ### IDE Configuration
 
 - **Go**: It is recommended to use `gopls` configured to recognize the nested `engine/go.mod` file workspace, or utilize the official Bazel IDE plugins.
