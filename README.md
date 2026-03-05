@@ -2,48 +2,42 @@
 
 > **🚧 Active Work in Progress**
 >
-> This repository is currently in the early stages of development. I am building this in the open for transparency. While the core architecture (Electron + Go + Bazel) is solidifying, the codebase is subject to
-> heavy refactoring and is **not yet ready for daily use or external contributions**.
+> This repository is currently in the early stages of development and built entirely in the open.
+> While the core architecture (Electron + Go + Bazel) is solidifying, the codebase is subject to heavy refactoring and
+> is **not yet ready for daily use or external contributions**.
 
-Patrol is a desktop application providing an advanced, high-performance interface for Git repositories.
-Designed as a feature-rich, modern alternative to built-in Git clients, Patrol leverages data denormalization and graph native indexing and traverse
-paradigms to unlock deep and efficient introspection of Git history.
+The Patrol project aims to evolve into a full-featured desktop application providing an advanced, high-performance interface for Git repositories. Designed as a feature-rich, modern alternative to built-in Git clients, Patrol leverages data denormalization and graph-native indexing paradigms to unlock deep and efficient introspection of Git history.
+
+Patrol is being built entirely in the open, and is available under the [Mozilla Public License 2.0](LICENSE).
 
 ## The Problem: UI-Blocking in Massive Repositories
 
-Standard Git GUIs are often built as monolithic applications. When executing heavy operations on large, decades-old
-monolithic repositories (like traversing massive DAGs, indexing thousands of commits, or resolving complex merges),
-standard clients frequently lock the main UI thread. This results in a sluggish, unresponsive developer experience.
+Standard Git graphical user interfaces are frequently built as monolithic applications. When executing computationally expensive operations on massive or historically dense repositories—such as traversing expansive Directed Acyclic Graphs (DAGs), indexing thousands of commits, or resolving complex merge conflicts—these standard clients often lock the main UI thread. This architectural limitation typically results in a sluggish, unresponsive developer experience.
 
 ## The Solution: A Decoupled Architecture
 
-Patrol takes inspiration from the **Docker Desktop daemon model**. It splits the application into two entirely separate
-processes, guaranteeing that the user interface never freezes, regardless of how heavy the Git operation is in the
-background.
+To comprehensively resolve UI thread contention, Patrol adopts a fully decoupled process model, drawing direct inspiration from the **Docker Desktop daemon architecture**. The application is explicitly divided into two distinct processes:
 
-### Architecture Highlights
+- **`patrold` (Go Engine)**: A headless, highly-performant background daemon. It uses the `go-git` library for Git operations and [Pathway](https://github.com/npclaudiu/pathway) (backed by PebbleDB) to index and query large Git DAGs efficiently and persistently.
+- **`patrol` (Electron / React Shell)**: The frontend, built with React and styled via Tailwind CSS, acts as a lightweight client that handles exclusively rendering and user input. For managing Electron resources (such as windows, web views, and menus), it uses [`@reactronx/react-electron`](https://github.com/npclaudiu/reactronx-react-electron), a library designed to replicate the [XUL](https://en.wikipedia.org/wiki/XUL) declarative experience in the Electron ecosystem using React.
 
-- **`patrold` (Go Engine)**: A headless, highly-performant background daemon. It interacts with the `go-git` library and
-  uses native graph databases with help from [Pathway](https://github.com/npclaudiu/pathway) (powered by PebbleDB) to index and query large Git DAGs almost instantly.
-- **`patrol` (Electron / React Shell)**: The frontend, built with React and styled via Tailwind CSS. It acts as a
-  lightweight client that only handles rendering and user input. It manages Electron window state natively through
-  `@reactronx/react-electron`.
-- **Connect-RPC over IPC**: The shell and engine do not communicate via standard standard input/output (stdin/stdout).
-  Instead, they use a strict Protobuf contract over native IPC channels (Unix domain sockets on macOS/Linux, Named pipes
-  on Windows) to prevent port collisions and ensure secure, typed, lightning-fast data transfer.
-- **Bazel (Bzlmod)**: The entire polyglot monorepo is stitched together, built, and packaged using Bazel. This ensures
-  hermetic, cacheable, and reproducible builds across both the Go and Node.js ecosystems.
+### Architecture Documentation
+
+For a comprehensive understanding of the system's design patterns, refer to the following specification documents:
+
+- **[Architecture Overview](docs/architecture/overview.md)**: A high-level breakdown of the decoupled architecture and data indexing strategies.
+- **[Inter-Process Communication (IPC)](docs/architecture/ipc.md)**: Details how the shell and engine achieve strictly-typed, lightning-fast data transfer using Connect-RPC over native operating system channels (Unix domain sockets on macOS/Linux, Named pipes on Windows), circumventing the fragility of localhost TCP binding.
+- **[Build System Architecture](docs/architecture/build-system.md)**: Explains the rationale and configuration for utilizing Bazel (Bzlmod) to orchestrate this polyglot monorepo, ensuring hermetic, cacheable, and reproducible builds across both the Go and Node.js ecosystems.
 
 ---
 
 ## Development Workflow
 
-This codebase is a polyglot monorepo managed entirely by **Bazel**. If you are exploring the code, here is how the build
-system is structured.
+This codebase operates as a polyglot monorepo managed entirely by **Bazel**. If you intend to explore or build the code locally, you must utilize the standardized build toolchain.
 
 ### Prerequisites
 
-1. Install [Bazelisk](https://github.com/bazelbuild/bazelisk) (the official Bazel wrapper):
+1. Install [Bazelisk](https://github.com/bazelbuild/bazelisk), the official Bazel version manager:
 
    ```bash
    brew install bazelisk
@@ -51,14 +45,13 @@ system is structured.
 
 2. Install [pnpm](https://pnpm.io/) for frontend dependency management.
 
-### Working with the Code
+### Dependency Management
 
-You rarely need to write `BUILD.bazel` files by hand carefully. Instead, rely on automated tools:
+Bazel abstracts away much of the manual configuration required in polyglot environments, provided you utilize the correct workflows:
 
 #### 1. Managing Go Dependencies (`patrold`)
 
-Whenever you add a new Go package or update the `engine/go.mod` file, you must run Gazelle to auto-generate the BUILD
-targets:
+When introducing a new Go package or modifying the `engine/go.mod` file, you are required to execute Gazelle to automatically regenerate the corresponding `BUILD.bazel` targets:
 
 ```bash
 bazel run //:gazelle
@@ -66,36 +59,28 @@ bazel run //:gazelle
 
 #### 2. Managing Node Dependencies (`patrol`)
 
-Whenever you add a new dependency to the Electron shell or React frontend, do so using `pnpm`:
+When adding dependencies to the Electron shell or React frontend workspaces, always use `pnpm` from within the target directory:
 
 ```bash
 cd shell
 pnpm install <package-name>
 ```
 
-Bazel will automatically read the updated `pnpm-lock.yaml` file on your next build—you don't need to manually update
-Bazel extensions.
+Bazel automatically parses the updated `pnpm-lock.yaml` file during the subsequent build invocation; manual updates to Bazel extensions for Node packages are generally not required.
 
 ### Building
 
-To build the Go Engine (cross-platform):
+To compile the Go Engine across platforms:
 
 ```bash
 bazel build //engine
 ```
 
-To format all files:
-
-```bash
-# Add formatters (prettier/gofmt) targets to Bazel as the project grows
-```
-
 ### IDE Configuration
 
-- **Go**: We recommend using `gopls` configured to understand the nested `engine/go.mod` file, or running the official
-  Bazel plugin.
-- **TypeScript**: Standard VS Code setup works fine, simply open the workspace at the root.
+- **Go**: It is recommended to use `gopls` configured to recognize the nested `engine/go.mod` file workspace, or utilize the official Bazel IDE plugins.
+- **TypeScript**: A standard VS Code environment will initialize correctly by opening the workspace at the repository root.
 
-## License
+## Copyright and License
 
-This project is licensed under the [MPL 2.0 License](LICENSE).
+Copyright © 2026 Claudiu Nedelcu. Licensed under the [Mozilla Public License 2.0](LICENSE).
