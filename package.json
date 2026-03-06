@@ -1,0 +1,10 @@
+{
+    "name": "patrol-monorepo",
+    "private": true,
+    "packageManager": "pnpm@10.30.3",
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "electron"
+        ]
+    }
+}

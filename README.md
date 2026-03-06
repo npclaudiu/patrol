@@ -79,13 +79,13 @@ bazel build //engine
 To compile the React/Electron Shell TypeScript out to `dist/`:
 
 ```bash
-bazel build //shell:shell_ts
+bazel build //shell/patrol:shell_ts
 ```
 
 To launch the Electron application locally:
 
 ```bash
-bazel run //shell:start
+bazel run //shell/patrol:start
 ```
 
 ### IDE Configuration

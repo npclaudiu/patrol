@@ -1,0 +1,3 @@
+[submodule "shell/reactronx-react-electron"]
+	path = shell/reactronx-react-electron
+	url = https://github.com/npclaudiu/reactronx-react-electron

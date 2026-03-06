@@ -3,5 +3,5 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("graphaeld engine started")
+	fmt.Println("patrold: Hello, World!")
 }

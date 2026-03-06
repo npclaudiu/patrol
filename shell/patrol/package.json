@@ -1,0 +1,16 @@
+{
+  "name": "patrol",
+  "version": "0.0.0",
+  "scripts": {},
+  "packageManager": "pnpm@10.30.3",
+  "dependencies": {
+    "react": "^19.0.0",
+    "@reactronx/react-electron": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "@types/react": "^19.0.0",
+    "electron": "^40.7.0",
+    "typescript": "^5.9.3"
+  }
+}
