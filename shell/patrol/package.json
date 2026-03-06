@@ -54,7 +54,12 @@
   },
   "packageManager": "pnpm@10.30.3",
   "dependencies": {
+    "@bufbuild/protobuf": "~1.10.1",
+    "@connectrpc/connect": "^1.6.0",
+    "@connectrpc/connect-node": "^1.6.0",
+    "@patrol/engine-api": "workspace:*",
     "@reactronx/react-electron": "workspace:*",
+    "electron-log": "^5.4.3",
     "react": "^19.0.0",
     "webui": "workspace:*"
   },

@@ -28,8 +28,15 @@ tasks:
     cmds:
       - go work sync
 
+  proto:build:
+    desc: Generate Protocol Buffer bindings using Buf
+    cmds:
+      - pnpm --filter @patrol/engine-api run generate
+
   go:compile:
     desc: Compile all Go packages from modules in the engine workspace
+    deps:
+      - proto:build
     dir: "{{.ENGINE_WORKSPACE_DIR}}"
     cmds:
       - for: { var: ENGINE_MODULES, split: ' ' }
@@ -99,6 +106,8 @@ tasks:
 
   shell:build:
     desc: Build all workspace packages that declare a build script
+    deps:
+      - proto:build
     cmds:
       - pnpm -r --filter "{{.SHELL_FILTER}}" --if-present run build
 

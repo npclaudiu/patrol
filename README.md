@@ -2,9 +2,9 @@
 
 > **🚧 Active Work in Progress**
 >
-> This repository is currently in the early stages of development and built entirely in the open. While the core
-> architecture (Electron + React + Go) is solidifying, the codebase is subject to heavy refactoring and is **not yet
-> ready for daily use or external contributions**.
+> This repository is currently in the early stages of development. While the core architecture (Electron + React + Go)
+> is solidifying, the codebase is subject to heavy refactoring and is **not yet ready for regular use or external
+> contributions**.
 
 The Patrol project aims to evolve into a full-featured desktop application providing an advanced, high-performance
 interface for Git repositories. Designed as a feature-rich, modern alternative to built-in Git clients, Patrol leverages
@@ -12,27 +12,24 @@ data denormalization and graph-native indexing paradigms to unlock deep and effi
 
 Patrol is being built entirely in the open, and is available under the [Mozilla Public License 2.0](LICENSE).
 
-## The Problem: UI-Blocking in Massive Repositories
+## Overview
 
 Standard Git graphical user interfaces are frequently built as monolithic applications. When executing computationally
 expensive operations on massive or historically dense repositories—such as traversing expansive Directed Acyclic Graphs
 (DAGs), indexing thousands of commits, or resolving complex merge conflicts—these standard clients often lock the main
 UI thread. This architectural limitation typically results in a sluggish, unresponsive developer experience.
 
-## The Solution: A Decoupled Architecture
-
-To comprehensively resolve UI thread contention, Patrol adopts a fully decoupled process model, drawing direct
-inspiration from the **Docker Desktop daemon architecture**. The application is explicitly divided into two distinct
-processes:
+To comprehensively resolve UI thread contention, Patrol adopts a fully decoupled process model. The application is
+explicitly divided into two distinct executables:
 
 - **`patrold` (Go Engine)**: A headless, highly-performant background daemon. It uses the `go-git` library for Git
   operations and [Pathway](https://github.com/npclaudiu/pathway) (backed by PebbleDB) to index and query large Git DAGs
   efficiently and persistently.
 - **`patrol` (Electron / React Shell)**: The frontend, built with React and styled via Tailwind CSS, acts as a
-  lightweight client that handles exclusively rendering and user input. For managing Electron resources (such as
-  windows, web views, and menus), it uses
-  [`@reactronx/react-electron`](https://github.com/npclaudiu/reactronx-react-electron), a library designed to replicate
-  the [XUL](https://en.wikipedia.org/wiki/XUL) declarative experience in the Electron ecosystem using React.
+  lightweight client that handles exclusively rendering and user input. The UI rendering itself is delegated to the
+  `shell/webui` workspace. For managing Electron resources (such as windows, web views, and menus) directly from React,
+  it uses `@reactronx/react-electron`, which is integrated as a local Git submodule within the monorepo
+  (`shell/reactronx-react-electron`) to allow tandem development.
 
 ### Architecture Documentation
 
@@ -43,6 +40,9 @@ For a comprehensive understanding of the system's design patterns, refer to the 
 - **[Inter-Process Communication (IPC)](docs/architecture/ipc.md)**: Details how the shell and engine achieve
   strictly-typed, lightning-fast data transfer using Connect-RPC over native operating system channels (Unix domain
   sockets on macOS/Linux, Named pipes on Windows), circumventing the fragility of localhost TCP binding.
+- **[Distribution](docs/architecture/distribution.md)**: Describes the application packaging strategy,
+  including how the Electron shell is bundled into an ASAR archive, how the external Go daemon is embedded, and the
+  code-signing approach.
 
 ---
 
@@ -59,7 +59,8 @@ entirely by `pnpm` scripts.
 
 ### Dependency Management
 
-Initialize Git submodules (required for local development of vendored components such as `engine/pathway`):
+Initialize Git submodules (required for local development of vendored components such as `engine/pathway` and
+`shell/reactronx-react-electron`):
 
 ```bash
 git submodule update --init --recursive
@@ -80,14 +81,22 @@ pnpm --filter patrol add <package-name>
 For Go dependencies, run commands from the specific module directory (for example `engine/patrold`) and keep
 `engine/go.work` updated.
 
-### Go Module Layout
+### Workspace Layout
 
-The `engine` directory supports multiple Go modules:
+The repository is divided into backend (`engine/`) and frontend (`shell/`) workspaces.
 
-- `engine/patrold`
+**Backend (`engine/`):**
+
+- `engine/patrold` (Main daemon module)
 - `engine/pathway` (Git submodule; co-developed with Patrol)
 
 Additional Go modules can be added as sibling directories under `engine/` and included in `engine/go.work`.
+
+**Frontend (`shell/`):**
+
+- `shell/patrol` (Electron main process wrapper and packager)
+- `shell/webui` (Browser-facing UI logic)
+- `shell/reactronx-react-electron` (Git submodule; React renderer for Electron primitives)
 
 ### Development & Building
 
@@ -120,6 +129,13 @@ To run test targets:
 
 ```bash
 pnpm run test
+```
+
+To package the application into an OS-specific distribution executable (integrating ASAR building and `patrold`
+embedding via `electron-builder`):
+
+```bash
+pnpm run package
 ```
 
 #### Granular Commands

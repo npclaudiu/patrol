@@ -1,11 +1,11 @@
-# Node.js
 node_modules/
 .pnpm-store/
 .parcel-cache/
 .task/
+/.patrol/
+/build/
+
+engine/api/dist
 
 shell/*/dist
 shell/*/dist-pack
-
-/.patrol/
-/build/
