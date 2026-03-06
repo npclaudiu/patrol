@@ -1,14 +1,24 @@
 {
   "name": "patrol",
-  "main": "dist/main.js",
+  "main": "dist/bootstrap/index.js",
   "targets": {
     "main": {
-      "source": "src/main.tsx",
+      "source": "src/bootstrap/index.ts",
       "context": "electron-main",
-      "distDir": "dist"
+      "optimize": false
+    },
+    "cli": {
+      "source": "src/cli/index.ts",
+      "context": "electron-main",
+      "distDir": "dist/cli"
+    },
+    "ui": {
+      "source": "src/main/index.tsx",
+      "context": "electron-main",
+      "distDir": "dist/ui"
     },
     "renderer": {
-      "source": "src/index.html",
+      "source": "src/renderer/index.html",
       "context": "browser",
       "distDir": "dist/renderer",
       "publicUrl": "./"
