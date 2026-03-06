@@ -1,13 +1,19 @@
 import { app } from 'electron';
 import * as path from 'path';
 
+function getEngineBinaryName(): string {
+    return process.platform === 'win32' ? 'patrold.exe' : 'patrold';
+}
+
 export function getEnginePath(): string {
+    const engineBinaryName = getEngineBinaryName();
+
     if (app.isPackaged) {
         // In production, electron-builder extraResources puts it here:
-        return path.join(process.resourcesPath, 'engine', 'patrold');
+        return path.join(process.resourcesPath, 'engine', engineBinaryName);
     }
     // In local dev, Taskfile shell:artifacts puts it here:
-    return path.join(app.getAppPath(), '../../build/engine/patrold');
+    return path.join(app.getAppPath(), '../../build/engine', engineBinaryName);
 }
 
 function boot() {
@@ -54,4 +60,3 @@ if (!gotTheLock) {
     // Boot primary functionality
     boot();
 }
-
