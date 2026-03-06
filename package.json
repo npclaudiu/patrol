@@ -16,7 +16,8 @@
         "shell:build": "task shell:build",
         "shell:start": "pnpm --filter patrol start",
         "lint": "biome check .",
-        "format": "biome format --write ."
+        "format": "biome format --write .",
+        "package": "task package"
     },
     "packageManager": "pnpm@10.30.3",
     "pnpm": {

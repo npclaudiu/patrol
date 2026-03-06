@@ -5,6 +5,7 @@ node_modules/
 .task/
 
 shell/*/dist
+shell/*/dist-pack
 
-# App Database
-.patrol/
+/.patrol/
+/build/

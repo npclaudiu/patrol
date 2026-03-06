@@ -1,6 +1,15 @@
 import { app } from 'electron';
 import * as path from 'path';
 
+export function getEnginePath(): string {
+    if (app.isPackaged) {
+        // In production, electron-builder extraResources puts it here:
+        return path.join(process.resourcesPath, 'engine', 'patrold');
+    }
+    // In local dev, Taskfile shell:artifacts puts it here:
+    return path.join(app.getAppPath(), '../../build/engine/patrold');
+}
+
 function boot() {
     // Check if there are CLI arguments indicating specific actions
     // For now, if we have specific flags we might load the CLI.
@@ -45,3 +54,4 @@ if (!gotTheLock) {
     // Boot primary functionality
     boot();
 }
+

@@ -1,5 +1,8 @@
 {
   "name": "patrol",
+  "version": "0.1.0",
+  "description": "Patrol Application Shell",
+  "author": "npclaudiu",
   "main": "dist/bootstrap/index.js",
   "targets": {
     "main": {
@@ -18,8 +21,33 @@
       "distDir": "dist/ui"
     }
   },
+  "build": {
+    "appId": "com.github.npclaudiu.patrol",
+    "productName": "Patrol",
+    "directories": {
+      "output": "dist-pack"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../../build/engine",
+        "to": "engine",
+        "filter": [
+          "patrold",
+          "patrold.exe"
+        ]
+      }
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "nodeGypRebuild": false
+  },
   "scripts": {
     "build": "shx rm -rf dist .parcel-cache && parcel build",
+    "package": "electron-builder --dir",
     "dev": "parcel watch",
     "typecheck": "tsc --noEmit",
     "start": "electron ."
@@ -34,6 +62,7 @@
     "@types/node": "^25.3.3",
     "@types/react": "^19.0.0",
     "electron": "^40.7.0",
+    "electron-builder": "^26.8.1",
     "parcel": "^2.13.3",
     "shx": "^0.4.0",
     "typescript": "^5.9.3"

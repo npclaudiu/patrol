@@ -118,11 +118,32 @@ tasks:
     cmds:
       - pnpm -r --filter "{{.SHELL_FILTER}}" --if-present run format
 
+  shell:artifacts:
+    desc: Stage binary artifacts natively so the packager can resolve paths
+    cmds:
+      - mkdir -p build/engine
+      - pnpm -C shell/patrol exec shx cp -r ../../.task/go/bin/patrold/* ../../build/engine/
+
+  shell:package:
+    desc: Package the shell app using electron-builder
+    deps:
+      - shell:build
+      - shell:artifacts
+    cmds:
+      - pnpm --filter patrol run package
+
   build:
     desc: Build Go modules and shell workspaces
     deps:
       - go:build
       - shell:build
+
+  package:
+    desc: Build and package the application into an executable
+    deps:
+      - build
+    cmds:
+      - task shell:package
 
   dev:
     desc: Start the development environment (concurrent Go backend and JS frontend)
