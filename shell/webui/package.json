@@ -1,0 +1,39 @@
+{
+    "name": "webui",
+    "version": "0.1.0",
+    "private": true,
+    "source": "src/index.html",
+    "targets": {
+        "default": {
+            "context": "browser",
+            "distDir": "dist",
+            "publicUrl": "./"
+        }
+    },
+    "scripts": {
+        "dev": "parcel watch",
+        "build": "shx rm -rf dist && parcel build",
+        "typecheck": "tsc --noEmit",
+        "lint": "biome check .",
+        "format": "biome format --write ."
+    },
+    "dependencies": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-router": "^7.3.0"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
+        "@parcel/packager-raw-url": "^2.13.3",
+        "@parcel/transformer-webmanifest": "^2.13.3",
+        "@tailwindcss/postcss": "^4.0.0",
+        "@types/node": "^22.0.0",
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "parcel": "^2.13.3",
+        "postcss": "^8.5.0",
+        "shx": "^0.4.0",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5.9.3"
+    }
+}

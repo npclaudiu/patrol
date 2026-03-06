@@ -23,23 +23,41 @@ tasks:
       - pnpm install
 
   go:work:sync:
-    desc: Sync module dependencies declared in the engine Go workspace
+    desc: Sync module dependencies declared in the engine Go workspace (may update go.mod/go.sum files)
     dir: "{{.ENGINE_WORKSPACE_DIR}}"
     cmds:
       - go work sync
 
-  go:build:
-    desc: Build Go command packages from modules in the engine workspace
+  go:compile:
+    desc: Compile all Go packages from modules in the engine workspace
     dir: "{{.ENGINE_WORKSPACE_DIR}}"
     cmds:
-      - go work sync
+      - for: { var: ENGINE_MODULES, split: ' ' }
+        cmd: go -C {{.ITEM}} test -run '^$' ./...
+
+  go:build:
+    desc: Build Go command binaries from modules in the engine workspace
+    deps:
+      - go:compile
+    dir: "{{.ENGINE_WORKSPACE_DIR}}"
+    cmds:
       - for: { var: ENGINE_MODULES, split: ' ' }
         cmd: |
           if [ -e ../.task/go/bin/{{.ITEM}} ] && [ ! -d ../.task/go/bin/{{.ITEM}} ]; then
             rm -f ../.task/go/bin/{{.ITEM}}
           fi
           mkdir -p ../.task/go/bin/{{.ITEM}}
-          go -C {{.ITEM}} build -o ../../.task/go/bin/{{.ITEM}}/ ./...
+          mains="$(go -C {{.ITEM}} list -json ./... | awk '
+            /"ImportPath":/ {ip=$2; gsub(/[",]/, "", ip)}
+            /"Name": "main"/ {if (ip != "") print ip}
+          ')"
+          if [ -z "$mains" ]; then
+            echo "No main packages found in module {{.ITEM}}; skipping binary output."
+          else
+            for mainpkg in $mains; do
+              go -C {{.ITEM}} build -o ../../.task/go/bin/{{.ITEM}}/ "$mainpkg"
+            done
+          fi
 
   go:test:
     desc: Run Go tests from modules in the engine workspace

@@ -16,30 +16,26 @@
       "source": "src/main/index.tsx",
       "context": "electron-main",
       "distDir": "dist/ui"
-    },
-    "renderer": {
-      "source": "src/renderer/index.html",
-      "context": "browser",
-      "distDir": "dist/renderer",
-      "publicUrl": "./"
     }
   },
   "scripts": {
-    "build": "parcel build",
+    "build": "shx rm -rf dist .parcel-cache && parcel build",
     "dev": "parcel watch",
     "typecheck": "tsc --noEmit",
     "start": "electron ."
   },
   "packageManager": "pnpm@10.30.3",
   "dependencies": {
+    "@reactronx/react-electron": "workspace:*",
     "react": "^19.0.0",
-    "@reactronx/react-electron": "workspace:*"
+    "webui": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
     "@types/react": "^19.0.0",
     "electron": "^40.7.0",
     "parcel": "^2.13.3",
+    "shx": "^0.4.0",
     "typescript": "^5.9.3"
   }
 }

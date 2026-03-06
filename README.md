@@ -49,15 +49,21 @@ For a comprehensive understanding of the system's design patterns, refer to the 
 ## Development Workflow
 
 This codebase operates as a polyglot monorepo managed by **pnpm workspaces** (TypeScript) and **Go workspaces**
-(`go.work`) for backend modules. A root `Taskfile.yml` orchestrates build and test workflows across components.
+(`go.work`) for backend modules. A root `Taskfile.yml` orchestrates build and test workflows across components, wrapped
+entirely by `pnpm` scripts.
 
 ### Prerequisites
 
 1. Install [pnpm](https://pnpm.io/) for frontend dependency management.
 2. Install [Go](https://golang.org/) for backend modules.
-3. Install [Task](https://taskfile.dev/) (or run it via `pnpm exec task` if installed locally).
 
 ### Dependency Management
+
+Initialize Git submodules (required for local development of vendored components such as `engine/pathway`):
+
+```bash
+git submodule update --init --recursive
+```
 
 Install JavaScript dependencies from the repository root:
 
@@ -76,9 +82,10 @@ For Go dependencies, run commands from the specific module directory (for exampl
 
 ### Go Module Layout
 
-The `engine` directory supports multiple Go modules. The current backend daemon module is:
+The `engine` directory supports multiple Go modules:
 
 - `engine/patrold`
+- `engine/pathway` (Git submodule; co-developed with Patrol)
 
 Additional Go modules can be added as sibling directories under `engine/` and included in `engine/go.work`.
 
@@ -88,22 +95,10 @@ Instead of running the frontend and backend separately, you can use the unified 
 Parcel hot-reloading dev server and the Go backend (via `air` for automatic rebuilding):
 
 ```bash
-task dev
-```
-
-You can run the same workflow through npm scripts:
-
-```bash
 pnpm run dev
 ```
 
 To build both Go and TypeScript components for production:
-
-```bash
-task build
-```
-
-Equivalent npm script:
 
 ```bash
 pnpm run build
@@ -112,29 +107,32 @@ pnpm run build
 To run linting, TypeScript typechecking, and Go vet checks:
 
 ```bash
-task check
+pnpm run check
 ```
 
 To automatically fix formatting issues:
 
 ```bash
-task fix
+pnpm run fix
 ```
 
 To run test targets:
 
 ```bash
-task test
+pnpm run test
 ```
 
 #### Granular Commands
 
 If you need to run specific parts of the build system independently:
 
-- **Build all Go packages:** `task go:build`
-- **Build all TS packages:** `task shell:build`
-- **Run Go tests:** `task go:test`
-- **Run the Go daemon:** `task go:run`
+- **Build all Go packages:** `pnpm run go:build`
+- **Compile all Go modules (no binary emission):** `pnpm run go:compile`
+- **Sync Go workspace module metadata:** `pnpm run go:work:sync`
+- **Build the Electron shell:** `pnpm run shell:build`
+- **Run the Electron shell locally:** `pnpm run shell:start`
+- **Run Go tests:** `pnpm run go:test`
+- **Run the Go daemon:** `pnpm run go:run`
 
 ### IDE Configuration
 

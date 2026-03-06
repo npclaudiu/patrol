@@ -8,10 +8,15 @@
         "check": "task check",
         "fix": "task fix",
         "test": "task test",
+        "go:work:sync": "task go:work:sync",
+        "go:compile": "task go:compile",
         "go:build": "task go:build",
         "go:test": "task go:test",
         "go:run": "task go:run",
-        "shell:build": "task shell:build"
+        "shell:build": "task shell:build",
+        "shell:start": "pnpm --filter patrol start",
+        "lint": "biome check .",
+        "format": "biome format --write ."
     },
     "packageManager": "pnpm@10.30.3",
     "pnpm": {
@@ -25,6 +30,7 @@
         ]
     },
     "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
         "@go-task/cli": "^3.48.0"
     }
 }
