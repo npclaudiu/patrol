@@ -1,10 +1,30 @@
 {
     "name": "patrol-monorepo",
     "private": true,
+    "scripts": {
+        "task": "task",
+        "build": "task build",
+        "dev": "task dev",
+        "check": "task check",
+        "fix": "task fix",
+        "test": "task test",
+        "go:build": "task go:build",
+        "go:test": "task go:test",
+        "go:run": "task go:run",
+        "shell:build": "task shell:build"
+    },
     "packageManager": "pnpm@10.30.3",
     "pnpm": {
         "onlyBuiltDependencies": [
-            "electron"
+            "electron",
+            "@parcel/watcher",
+            "@swc/core",
+            "@go-task/cli",
+            "lmdb",
+            "msgpackr-extract"
         ]
+    },
+    "devDependencies": {
+        "@go-task/cli": "^3.48.0"
     }
 }

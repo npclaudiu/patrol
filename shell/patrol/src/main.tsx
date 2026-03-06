@@ -14,7 +14,7 @@ declare module 'react' {
 
 function App() {
     // Determine the path to our sibling index.html file
-    const fileUrl = `file://${path.join(__dirname, '../src/index.html')}`;
+    const fileUrl = `file://${path.join(__dirname, 'renderer/index.html')}`;
 
     return (
         <app>

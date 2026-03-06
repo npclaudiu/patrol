@@ -1,11 +1,10 @@
-/.docs
-
-# Bazel
-/bazel-*
-
 # Node.js
 node_modules/
 .pnpm-store/
+.parcel-cache/
+.task/
+
+shell/*/dist
 
 # App Database
 .patrol/

@@ -1,7 +1,25 @@
 {
   "name": "patrol",
-  "version": "0.0.0",
-  "scripts": {},
+  "main": "dist/main.js",
+  "targets": {
+    "main": {
+      "source": "src/main.tsx",
+      "context": "electron-main",
+      "distDir": "dist"
+    },
+    "renderer": {
+      "source": "src/index.html",
+      "context": "browser",
+      "distDir": "dist/renderer",
+      "publicUrl": "./"
+    }
+  },
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "typecheck": "tsc --noEmit",
+    "start": "electron ."
+  },
   "packageManager": "pnpm@10.30.3",
   "dependencies": {
     "react": "^19.0.0",
@@ -11,6 +29,7 @@
     "@types/node": "^25.3.3",
     "@types/react": "^19.0.0",
     "electron": "^40.7.0",
+    "parcel": "^2.13.3",
     "typescript": "^5.9.3"
   }
 }

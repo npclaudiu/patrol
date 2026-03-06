@@ -1,6 +1,0 @@
-load("@gazelle//:def.bzl", "gazelle")
-load("@npm//:defs.bzl", "npm_link_all_packages")
-
-npm_link_all_packages(name = "node_modules")
-# gazelle:prefix github.com/npclaudiu/patrol
-gazelle(name = "gazelle")

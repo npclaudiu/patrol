@@ -3,3 +3,8 @@ packages:
 
 onlyBuiltDependencies:
   - "electron"
+  - "@parcel/watcher"
+  - "@swc/core"
+  - "@go-task/cli"
+  - "lmdb"
+  - "msgpackr-extract"
