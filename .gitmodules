@@ -1,6 +1,0 @@
-[submodule "shell/reactronx-react-electron"]
-	path = shell/reactronx-react-electron
-	url = https://github.com/npclaudiu/reactronx-react-electron
-[submodule "engine/pathway"]
-	path = engine/pathway
-	url = https://github.com/npclaudiu/pathway
