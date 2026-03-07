@@ -1,18 +1,19 @@
 {
-    "name": "webui",
-    "version": "0.1.0",
+    "name": "@patrol/patrol-webui",
+    "version": "0.0.0",
     "private": true,
     "source": "src/index.html",
     "targets": {
         "default": {
             "context": "browser",
-            "distDir": "dist",
+            "distDir": "build",
             "publicUrl": "./"
         }
     },
     "scripts": {
-        "dev": "parcel watch",
-        "build": "shx rm -rf dist && parcel build",
+        "start": "parcel serve",
+        "clear": "shx rm -rf build",
+        "build": "parcel build",
         "typecheck": "tsc --noEmit",
         "lint": "biome check .",
         "format": "biome format --write ."

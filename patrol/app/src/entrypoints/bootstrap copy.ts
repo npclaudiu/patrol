@@ -1,23 +1,8 @@
 import { app } from 'electron';
 import * as path from 'path';
 import { EngineController } from '../engine/controller';
-import { APP_NAME } from '../config';
+// import { APP_NAME } from '../config';
 import logger from '../logger';
-
-function getEngineBinaryName(): string {
-    return process.platform === 'win32' ? 'patrold.exe' : 'patrold';
-}
-
-export function getEnginePath(): string {
-    const engineBinaryName = getEngineBinaryName();
-
-    if (app.isPackaged) {
-        // In production, electron-builder extraResources puts it here:
-        return path.join(process.resourcesPath, 'engine', engineBinaryName);
-    }
-    // In local dev, Taskfile shell:artifacts puts it here:
-    return path.join(app.getAppPath(), '../../build/engine', engineBinaryName);
-}
 
 function boot() {
     // Check if there are CLI arguments indicating specific actions
@@ -39,7 +24,7 @@ function boot() {
 }
 
 // Request Single Instance Lock
-app.setName(APP_NAME);
+// app.setName(APP_NAME);
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
@@ -84,3 +69,5 @@ if (!gotTheLock) {
     // Boot primary functionality
     boot();
 }
+
+console.log(`bootstrap: args=${args}, gotTheLock=${gotTheLock}, appPath=${app.getAppPath()}, isPackaged=${app.isPackaged}, appName=${app.getName()}`);

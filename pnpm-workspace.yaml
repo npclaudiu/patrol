@@ -1,6 +1,7 @@
 packages:
-  - "engine/*"
-  - "shell/*"
+  - "patrol/*"
+  - "patrold/*"
+  - "third_party/*"
 
 onlyBuiltDependencies:
   - "electron"

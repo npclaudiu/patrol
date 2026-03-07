@@ -1,41 +1,47 @@
 {
-  "name": "patrol",
-  "version": "0.1.0",
-  "description": "Patrol Application Shell",
-  "author": "npclaudiu",
-  "main": "dist/bootstrap/index.js",
+  "name": "@patrol/patrol-app",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Patrol File Manager",
+  "author": "Claudiu Nedelcu",
+  "main": "build/bundles/bootstrap.js",
   "targets": {
-    "main": {
-      "source": "src/bootstrap/index.ts",
+    "bootstrap": {
+      "source": "src/entrypoints/bootstrap.ts",
       "context": "electron-main",
-      "optimize": false
+      "distDir": "build/bundles",
+      "optimize": false,
+      "includeNodeModules": false
     },
-    "cli": {
-      "source": "src/cli/index.ts",
+    "core": {
+      "source": "src/entrypoints/core.tsx",
       "context": "electron-main",
-      "distDir": "dist/cli"
-    },
-    "ui": {
-      "source": "src/main/index.tsx",
-      "context": "electron-main",
-      "distDir": "dist/ui"
+      "distDir": "build/bundles",
+      "optimize": false,
+      "includeNodeModules": true
     }
   },
   "build": {
     "appId": "com.github.npclaudiu.patrol",
     "productName": "Patrol",
+    "mac": {
+      "notarize": false,
+      "identity": null,
+      "target": "dmg"
+    },
     "directories": {
-      "output": "dist-pack"
+      "output": "build/package"
     },
     "files": [
-      "dist/**/*",
+      "build/bundles/**/*",
       "package.json"
     ],
     "extraResources": [
       {
-        "from": "../../build/engine",
-        "to": "engine",
+        "from": "../../patrold/app",
+        "to": ".",
         "filter": [
+          "go.mod",
           "patrold",
           "patrold.exe"
         ]
@@ -46,7 +52,9 @@
     "nodeGypRebuild": false
   },
   "scripts": {
-    "build": "shx rm -rf dist .parcel-cache && parcel build",
+    "clear:bundles": "shx rm -rf build/bundles",
+    "build": "parcel build",
+    "clear:package": "shx rm -rf build/package",
     "package": "electron-builder --dir",
     "dev": "parcel watch",
     "typecheck": "tsc --noEmit",
@@ -57,11 +65,11 @@
     "@bufbuild/protobuf": "~1.10.1",
     "@connectrpc/connect": "^1.6.0",
     "@connectrpc/connect-node": "^1.6.0",
-    "@patrol/engine-api": "workspace:*",
+    "@patrol/patrold-api": "workspace:*",
     "@reactronx/react-electron": "workspace:*",
     "electron-log": "^5.4.3",
     "react": "^19.0.0",
-    "webui": "workspace:*"
+    "@patrol/patrol-webui": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",

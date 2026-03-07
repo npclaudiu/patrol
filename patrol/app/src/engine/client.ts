@@ -1,8 +1,7 @@
+import * as http from "node:http";
 import { createPromiseClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
-import { EngineService } from "@patrol/engine-api";
-import * as net from "net";
-import * as http from "http";
+import { EngineService } from "@patrol/patrold-api";
 
 export function createEngineClient(socketPath: string) {
     // 1. Create an HTTP Agent configured to route traffic over our UNIX Domain Socket/Named Pipe instead of TCP.

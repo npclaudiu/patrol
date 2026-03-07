@@ -1,11 +1,13 @@
-node_modules/
 .pnpm-store/
 .parcel-cache/
 .task/
+
+node_modules/
+
 /.patrol/
 /build/
 
-engine/api/dist
+/patrold/api/dist/
 
-shell/*/dist
-shell/*/dist-pack
+/patrol/app/build/
+/patrol/webui/dist/

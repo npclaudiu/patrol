@@ -1,0 +1,6 @@
+[submodule "third_party/reactronx-react-electron"]
+	path = third_party/reactronx-react-electron
+	url = https://github.com/npclaudiu/reactronx-react-electron
+[submodule "third_party/pathway"]
+	path = third_party/pathway
+	url = https://github.com/npclaudiu/pathway

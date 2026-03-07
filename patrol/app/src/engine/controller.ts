@@ -1,10 +1,25 @@
-import { ChildProcess, spawn } from 'child_process';
-import { getEnginePath } from '../bootstrap'; // Resolving to index.ts
+import { ChildProcess, spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { app } from 'electron';
 import logger from '../logger';
-import { randomUUID } from 'crypto';
-import * as path from 'path';
-import * as os from 'os';
 import { createEngineClient } from './client';
+
+function getEngineBinaryName(): string {
+    return process.platform === 'win32' ? 'patrold.exe' : 'patrold';
+}
+
+function getEnginePath(): string {
+    const engineBinaryName = getEngineBinaryName();
+
+    if (app.isPackaged) {
+        // In production, electron-builder extraResources puts it here:
+        return path.join(process.resourcesPath, 'engine', engineBinaryName);
+    }
+    // In local dev, Taskfile shell:artifacts puts it here:
+    return path.join(app.getAppPath(), '../../build/engine', engineBinaryName);
+}
 
 export class EngineController {
     private process: ChildProcess | null = null;
